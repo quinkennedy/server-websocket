@@ -1,8 +1,8 @@
 var WebSocket = require('ws');
-var JsonComm = require('spacebrew-core').JsonComm;
-var Client = require('spacebrew-core').Leaf;
-//var Route = require('spacebrew-core').Route;
-var Admin = require('spacebrew-core').Admin;
+var JsonComm = require('@spacebrew/server-core').JsonComm;
+var Client = require('@spacebrew/server-core').Leaf;
+//var Route = require('@spacebrew/server-core').Route;
+var Admin = require('@spacebrew/server-core').Admin;
 
 var WebSocketServer = function(manager, options, logger){
   this.manager = manager;
@@ -25,7 +25,7 @@ var WebSocketServer = function(manager, options, logger){
     this.warn = this.info = this.trace = function(){};
   }
 
-  this.startWebsocket();
+  this.startWebsocket(options);
 };
 
 WebSocketServer.prototype.adminCallback = function(message, handle){
@@ -49,10 +49,12 @@ WebSocketServer.getClientAddress = function(connection){
   }
 };
 
-WebSocketServer.prototype.startWebsocket = function(){
+WebSocketServer.prototype.startWebsocket = function(options){
   var self = this;
-  this.websocket = new WebSocket.Server({port:9000,
-                                         host:'0.0.0.0'});
+  options = options || {};
+  options.port = options.port || 9000;
+  options.host = options.host || '0.0.0.0';
+  this.websocket = new WebSocket.Server(options);
   this.websocket.on('connection', function(connection){
     var admin, client;
     connection.on('message', function(message/*, flags*/){

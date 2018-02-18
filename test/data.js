@@ -1,5 +1,5 @@
-var Route = require('../route.js');
-var Leaf = require('../leaf.js');
+var Route = require('@spacebrew/server-core').Route;
+var Leaf = require('@spacebrew/server-core').Leaf;
 var Data = function(){
   this.route1 = {style:Route.styles.STRING,
                  type:'string',

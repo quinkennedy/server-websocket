@@ -4,26 +4,19 @@ var D = require('./data.js');
 var d = new D();
 var WebSocket = require('ws');
 
-var portLegacy = 9011;
-var portNew = 9000;
+var wsPort = 9000;
 
-//run legacy spacebrew as child process
-var ChildProcess = require('child_process');
-var legacyServer = 
-  ChildProcess.spawn('./node_server.js', 
-                     ['--port', portLegacy, '--nopersist'], 
-                     {stdio:'ignore'});
+//run spacebrew
+var Spacebrew = require('@spacebrew/server-core').Manager;
+var WebSocketServer = require('../index.js');
+var spacebrew = new Spacebrew();
+var websocketServer = new WebSocketServer(spacebrew,
+                                          {port:wsPort, host:'127.0.0.1'},
+                                          undefined);
 
-//run new spacebrew
-var Servers = require('../servers.js');
-var servers = new Servers();
-servers.startWebsocket();
-
-var wsLegacy, wsNew;
-var msgLegacy, msgNew;
-msgLegacy = msgNew = function(){};
-var closeLegacy, closeNew;
-closeLegacy = closeNew = function(){
+var websocket;
+var message = function(){};
+var closeWS = function(){
   //not expected to close yet
   expect(0);
 };
@@ -42,84 +35,72 @@ var Counter = function(toNum, done){
 
 var sendMsg = function(json, done){
   var s = JSON.stringify(json);
-  var count = new Counter(2, done);
+  var count = new Counter(1, done);
   var sent = function(e){
     if (e){
       expect(0);
     }
     count.inc();
   };
-  wsLegacy.send(s, sent);
-  wsNew.send(s, sent);
+  websocket.send(s, sent);
 };
 
 var confirmResultIs = function(json, done){
-  var count = new Counter(2, done);
-  msgLegacy = function(msg){
-    var inJson = JSON.parse(msg);
-    expect(inJson).to.deep.equal(json);
-    count.inc();
-  };
-  msgNew = function(msg){
+  var count = new Counter(1, done);
+  message = function(msg){
     var inJson = JSON.parse(msg);
     expect(inJson).to.deep.equal(json);
     count.inc();
   };
 };
 
-var confirmResultsMatch = function(done){
-  var result;
-  var count = new Counter(2, done);
-  msgLegacy = function(msg){
-    var inJson = JSON.parse(msg);
-    if (result === undefined){
-      result = inJson;
-    } else {
-      expect(inJson).to.deep.equal(result);
-    }
-    count.inc();
-  };
-  msgNew = function(msg){
-    var inJson = JSON.parse(msg);
-    if (result === undefined){
-      result = inJson;
-    } else {
-      expect(inJson).to.deep.equal(result);
-    }
-    count.inc();
-  };
-};
+//var confirmResultsMatch = function(done){
+//  var result;
+//  var count = new Counter(1, done);
+//  msgLegacy = function(msg){
+//    var inJson = JSON.parse(msg);
+//    if (result === undefined){
+//      result = inJson;
+//    } else {
+//      expect(inJson).to.deep.equal(result);
+//    }
+//    count.inc();
+//  };
+//  msgNew = function(msg){
+//    var inJson = JSON.parse(msg);
+//    if (result === undefined){
+//      result = inJson;
+//    } else {
+//      expect(inJson).to.deep.equal(result);
+//    }
+//    count.inc();
+//  };
+//};
 
 //connect via websocket
 describe('Websocket API', function(){
   it('successfully connects', function(done){
     //set up the connections
-    wsLegacy = new WebSocket('ws://localhost:'+portLegacy+'/');
-    wsNew = new WebSocket('ws://localhost:'+portNew+'/');
+    websocket = new WebSocket('ws://localhost:' + wsPort + '/');
 
     var numConnected = 0;
     var trackConnect = function(){
       numConnected++;
-      if (numConnected === 2){
+      if (numConnected === 1){
         done();
-      } else if (numConnected > 2){
+      } else if (numConnected > 1){
         //should not be possible
         expect(0);
       }
     };
     
-    wsLegacy.on('open', function(){
-      trackConnect();
-    });
-    wsNew.on('open', function(){
+    websocket.on('open', function(){
       trackConnect();
     });
 
-    wsLegacy.on('message', msgLegacy);
-    wsNew.on('message', msgNew);
+    websocket.on('message', message);
 
-    wsLegacy.on('close', closeLegacy);
-    wsNew.on('close', closeNew);
+    websocket.on('close', closeWS);
   });
   it('can register as client', function(){
     
