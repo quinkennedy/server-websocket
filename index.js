@@ -52,10 +52,12 @@ WebSocketServer.getClientAddress = function(connection){
 WebSocketServer.prototype.startWebsocket = function(options){
   var self = this;
   options = options || {};
-  options.port = options.port || 9000;
-  options.host = options.host || '0.0.0.0';
-  this.websocket = new WebSocket.Server(options);
-  this.websocket.on('connection', function(connection){
+  if (!options.server){
+    options.port = options.port || 9000;
+    options.host = options.host || '0.0.0.0';
+  }
+  this.server = new WebSocket.Server(options);
+  this.server.on('connection', function(connection){
     var admin, client;
     connection.on('message', function(message/*, flags*/){
       try{

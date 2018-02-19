@@ -27,19 +27,19 @@
   },
   "homepage": "https://github.com/spacebrew/spacebrew-server-websocket#readme",
   "dependencies": {
-    "ws": "^1.1.1"
+    "ws": "^4.0.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "eslint": "^3.1.0",
-    "istanbul": "^0.4.4",
-    "jsdoc": "^3.4.0",
-    "mocha": "^2.5.3",
+    "chai": "^4.1.2",
+    "eslint": "^4.18.0",
+    "istanbul": "^0.4.5",
+    "jsdoc": "^3.5.5",
+    "mocha": "^5.0.1",
     "@spacebrew/server-core": "^1.0.0"
   },
   "optionalDependencies": {
-    "bufferutil": "^1.2.1",
-    "utf-8-validate": "^1.2.1"
+    "bufferutil": "^3.0.3",
+    "utf-8-validate": "^4.0.0"
   },
   "peerDependencies": {
     "@spacebrew/server-core": "^1.0.0"
