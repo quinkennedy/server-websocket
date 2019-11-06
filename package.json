@@ -38,8 +38,8 @@
     "nyc": "^14.1.1"
   },
   "optionalDependencies": {
-    "bufferutil": "^3.0.3",
-    "utf-8-validate": "^4.0.0"
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
   },
   "peerDependencies": {
     "@spacebrew/server-core": "quinkennedy/spacebrew#module"
