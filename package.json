@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/spacebrew/spacebrew-server-websocket#readme",
   "dependencies": {
-    "ws": "^7.2.0"
+    "ws": "^7.4.5"
   },
   "devDependencies": {
     "@spacebrew/server-core": "quinkennedy/spacebrew#module",
